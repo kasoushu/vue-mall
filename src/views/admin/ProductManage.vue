@@ -26,12 +26,112 @@
 					<span >
             				<a @click="">Delete</a>
           				</span>
+					
+					<span >
+            				<a @click="">Detail</a>
+          				</span>
 				</div>
 
 
 			</template>
 		</a-table>
-		{{selectedRowKeys}}
+		<a-modal v-model:visible="modalVisible"
+				 :title="modalTitle"
+				 @cancel="handleAddCancel"
+				 @ok="handleAddOk"
+				:confirm-loading="confirm_loading"
+				 ok-text="Submit"
+				 width="60%"
+		>
+<!--      <template #footer>-->
+<!--        <a-button key="back" @click="handleCancel">Return</a-button>-->
+<!--        <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>-->
+<!--      </template>-->
+			<a-form
+				:model="formState"
+				name="addProductForm"
+				:label-col="{ span: 8 }"
+				:wrapper-col="{ span: 16 }"
+				@finish=""
+				@finishFailed=""
+			>
+				<p>Name</p>
+				<a-form-item
+					name="name"
+					:rules="[{ required: true, message: 'Please input your product name!' }]"
+				>
+					<a-input v-model:value="formState.name"/>
+				</a-form-item>
+				<p>description</p>
+				<a-form-item
+					name="description"
+				>
+					<a-textarea  v-model:value="formState.password" placeholder="input your description" :rows="4" />
+				</a-form-item>
+				
+				<a-form-item name="category">
+					<p>Category</p>
+					<a-tree-select
+						v-model:value="formState.category_id"
+						show-search
+						style="width: 100%"
+						:dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+						placeholder="Please select category"
+						allow-clear
+						tree-default-expand-all
+						:tree-data="treeData"
+					>
+						<template #title="{ value: val, title }">
+							<b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
+							<template v-else>{{ title }}</template>
+						</template>
+					</a-tree-select>
+				</a-form-item>
+				
+				
+				<a-form-item
+					name="main_image" >
+					<p>MainImage</p>
+					<img style="width: 300px;height: 300px;" :src="formState.main_image">
+					<a-input placeholder="input your image link" v-model:value="formState.main_image"/>
+				</a-form-item>
+				
+				<a-form-item>
+					<p>Status</p>
+					<a-radio-group v-model:value="formState.status" button-style="solid">
+						<a-radio-button value="0" >待上架</a-radio-button>
+						<a-radio-button value="1" >已上架</a-radio-button>
+						<a-radio-button value="2" >已下架</a-radio-button>
+						<a-radio-button value="3" >售罄</a-radio-button>
+					</a-radio-group>
+				</a-form-item>
+				
+				<a-form-item>
+					<p>Price</p>
+					<a-input-number
+						
+						v-model:value="formState.price"
+						:formatter="value => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+						:parser="value => value.replace(/\¥\s?|(,*)/g, '')"
+						:min="0.01"
+						:step="0.01"
+						string-mode
+						style="width: 100px"
+					/>
+				</a-form-item>
+				
+				<a-form-item>
+					<p>Amount</p>
+					<a-input-number
+						
+						v-model:value="formState.mount"
+						:min="1"
+						style="width: 100px"
+					/>
+				</a-form-item>
+				
+			</a-form>
+    </a-modal>
 	</div>
 </template>
 <script>
@@ -65,7 +165,7 @@ const columns = [{
 },{
 		title:'Operation',
 		dataIndex: 'operation',
-		width:'10%',
+		// width:'10%',
 		slots: { customRender: "operation" }
 }
 ];
@@ -80,23 +180,44 @@ export default {
 	name:"ProductManage",
 	data(){
 		return {
+			formState:{
+				id:0,
+				category_id:0,
+				category_name:"",
+				title:"",
+				main_image:"",
+				detail_image:"",
+				delivery:"",
+				assurance:"",
+				weight:0,
+				brand:"",
+				origin:"",
+				shelf_life:"",
+				use_way:"",
+				packing_way:"",
+				storage_condition:"",
+				status:"",
+				name:"",
+				description:"",
+				price:0,
+				amount:0,
+				sales:0,
+				created:"",
+				updated:"",
+			},
+			modalTitle:"",
+			modalVisible:false,
 			selectedRowKeys:[],
 			data:new Map(),
 			cnt:100000,
 			loading:false,
 			columns,
-			cur:0,
-			pageTotal:0,
-			pagination:{
-				// total:15,
-				// current: 1,
-				pageSize:11,
-			},
+			cur:1,
+			pageTotal:10,
+			pageSize:11,
 			button_loading:false,
+			confirm_loading:false,
 		};
-	},
-	created() {
-	
 	},
 	methods:{
 		// handlePageChange(pag,filters,sorter){
@@ -113,20 +234,28 @@ export default {
 			this.selectedRowKeys=[]
 			this.button_loading = false;
 		},
+		handleAddCancel(){
+		
+		},
+		handleAddOk(){
+			this.modalVisible=false
+		},
 		handleAdd (){
-			this.cnt++;
-      		const newData = {
-        		key: this.cnt,
-        		name: `Edward King `,
-				category: 'Male',
-				price:19.9,
-				amount:this.cnt,
-				sales:9999,
-        		status: `on sale`,
-				operation:'',
-
-      		};
-      		this.data.set(this.cnt,newData);
+			// this.cnt++;
+      		// const newData = {
+        	// 	key: this.cnt,
+        	// 	name: `Edward King `,
+			// 	category: 'Male',
+			// 	category_id: '',
+			// 	price:19.9,
+			// 	amount:this.cnt,
+			// 	sales:9999,
+        	// 	status: `on sale`,
+			// 	operation:'',
+      		// };
+      		// this.data.set(this.cnt,newData);
+			this.modalVisible=true;
+			this.modalTitle="Add Product"
     	},
 		onSelectChange (changeableRowKeys ){
       		console.log('selectedRowKeys changed: ', changeableRowKeys);
@@ -134,6 +263,14 @@ export default {
 		},
 	},
 	computed:{
+		
+		pagination(){
+			return  {
+				total:this.total,
+				current: this.cur,
+				pageSize: this.pageSize,
+			}
+		},
 		button_enable(){
 			return this.selectedRowKeys.length === 0;
 			
