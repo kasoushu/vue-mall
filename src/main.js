@@ -5,7 +5,9 @@ import store from './store'
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
-import axios from 'axios'
+
+let app =  createApp(App).use(Antd).use(router).use(store)
 
 
-createApp(App).use(Antd).use(store).use(router).mount('#app')
+
+app.mount('#app')

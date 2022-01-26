@@ -13,7 +13,7 @@
 		<a-table
 			bordered
 			:columns="columns"
-			:data-source="getData"
+			:data-source="data"
 			:loading="loading"
 			:row-selection="rowSelection"
 			:pagination="pagination"
@@ -66,25 +66,20 @@
 				<a-form-item
 					name="description"
 				>
-					<a-textarea  v-model:value="formState.password" placeholder="input your description" :rows="4" />
+					<a-textarea  v-model:value="formState.description" placeholder="input your description" :rows="4" />
 				</a-form-item>
 				
 				<a-form-item name="category">
 					<p>Category</p>
 					<a-tree-select
 						v-model:value="formState.category_id"
-						show-search
+						tree-data-simple-mode
 						style="width: 100%"
 						:dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-						placeholder="Please select category"
-						allow-clear
-						tree-default-expand-all
 						:tree-data="treeData"
+						placeholder="Please select"
+						:load-data="onLoadData"
 					>
-						<template #title="{ value: val, title }">
-							<b v-if="val === 'parent 1-1'" style="color: #08c">sss</b>
-							<template v-else>{{ title }}</template>
-						</template>
 					</a-tree-select>
 				</a-form-item>
 				
@@ -109,7 +104,6 @@
 				<a-form-item>
 					<p>Price</p>
 					<a-input-number
-						
 						v-model:value="formState.price"
 						:formatter="value => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
 						:parser="value => value.replace(/\¥\s?|(,*)/g, '')"
@@ -124,7 +118,7 @@
 					<p>Amount</p>
 					<a-input-number
 						
-						v-model:value="formState.mount"
+						v-model:value="formState.amount"
 						:min="1"
 						style="width: 100px"
 					/>
@@ -138,6 +132,9 @@
 // import { usePagination } from 'vue-request';
 import axios from 'axios';
 import { Table } from 'ant-design-vue';
+import request from "../../utils/request";
+import {computed} from "vue";
+import { usePagination } from 'vue-request';
 
 const columns = [{
 	title: 'Name',
@@ -163,6 +160,10 @@ const columns = [{
 	title: 'Status',
 	dataIndex: 'status'
 },{
+	title: 'Created',
+		dataIndex: 'created'
+	},
+{
 		title:'Operation',
 		dataIndex: 'operation',
 		// width:'10%',
@@ -170,11 +171,10 @@ const columns = [{
 }
 ];
 
-const queryData = params => {
-	return axios.get('https://randomuser.me/api?noinfo', {
-		params,
-	});
-};
+
+function requestPages(params){
+	return request.get('/admin/get_page',{params})
+}
 
 export default {
 	name:"ProductManage",
@@ -206,18 +206,76 @@ export default {
 				updated:"",
 			},
 			modalTitle:"",
+			treeData:this.$store.getters.getCategories,
 			modalVisible:false,
 			selectedRowKeys:[],
-			data:new Map(),
 			cnt:100000,
-			loading:false,
 			columns,
-			cur:1,
-			pageTotal:10,
-			pageSize:11,
 			button_loading:false,
 			confirm_loading:false,
 		};
+	},
+	setup(){
+		const {
+			data,
+			current,
+			totalPage,
+			loading,
+			pageSize
+		} = usePagination(requestPages, {
+			defaultParams: [
+				{
+					page_size: 11,
+				},
+			],
+			formatResult: res=> res.data.data.list,
+			pagination: {
+				currentKey: 'page_index',
+				pageSizeKey: 'page_size',
+			},
+		});
+		// const data = list.list
+		// console.log(list.value);
+		// console.log(current);
+		// console.log(totalPage);
+		// console.log(pageSize);
+		const pagination = computed(() => ({
+			total: 100,
+			current: current.value,
+			pageSize: pageSize.value,
+		}));
+		// console('p',pagination)
+		// const list = computed(() =>
+		// 	{
+		// 		data.list
+		// 	}
+		//  );
+		// pagination(){
+		// 	return  {
+		// 		total:this.totalPage,
+		// 		current: this.current,
+		// 		pageSize: this.pageSize,
+		// 	}
+		// },
+		return {
+			data,
+			loading,
+			current,
+			totalPage,
+			pageSize,
+			pagination
+		};
+	},
+	created() {
+		//categories initiate
+		//request
+		this.$store.commit('initCategory')
+		// this.treeData = this.$store.getters.getCategories
+		// console.log(this.$store.getters.getCategories)
+		
+		// pages
+		
+
 	},
 	methods:{
 		// handlePageChange(pag,filters,sorter){
@@ -235,10 +293,45 @@ export default {
 			this.button_loading = false;
 		},
 		handleAddCancel(){
-		
+			this.confirm_loading=false
 		},
 		handleAddOk(){
-			this.modalVisible=false
+			this.confirm_loading=true
+			console.log('state  ',this.formState)
+			setTimeout(
+				()=>{
+					request({
+				url: '/admin/create_product',
+				method: 'post',
+				data: {
+					"category_id":this.formState.category_id,
+					"main_image":this.formState.main_image,
+					"status":this.formState.status,
+					"name":this.formState.name,
+					"description":this.formState.description,
+					"price":this.formState.price,
+					"amount":this.formState.amount,
+				}
+			}).then(
+				res => {
+					console.log(res)
+					if (res.data.code === 401) {
+						this.$store.commit('cleanToken')
+						console.log(res.message)
+					} else if (res.data.code === 200) {
+						this.modalVisible=false
+						this.confirm_loading=false
+					} else {
+						console.log(res.message)
+					}
+				}
+			).catch(
+				err => console.log(err)
+			)
+				},
+				500
+			)
+
 		},
 		handleAdd (){
 			// this.cnt++;
@@ -264,19 +357,60 @@ export default {
 	},
 	computed:{
 		
-		pagination(){
-			return  {
-				total:this.total,
-				current: this.cur,
-				pageSize: this.pageSize,
+		onLoadData() {
+			return treeNode => {
+				return new Promise(resolve => {
+					const {
+						id,
+					} = treeNode.dataRef;
+					setTimeout(() => {
+						let url = '/admin/get_category_parent/'+id
+						request({
+							url:url,
+							method: 'get',
+						}).then(
+							res=>{
+								let c =[]
+								console.log(res)
+								if (res.data.code===401){
+									this.$store.commit('cleanToken')
+									console.log(res.message)
+								}else if (res.data.code===200){
+									let t= res.data.data.total
+									// console.log(t)
+									for (let i=0;i<t;i++){
+										c.push({
+											id: res.data.data.list[i].id,
+											pId:res.data.data.list[i].parent_id ,
+											value: res.data.data.list[i].id,
+											title: res.data.data.list[i].name,
+											// isLeaf:res.data.list[t].parent_id===0,
+										})
+									}
+									this.$store.commit('addCategory',c)
+									this.treeData.concat(c)
+								}else {
+									console.log(res.message)
+								}
+							}
+						).catch(
+							err=>console.log(err)
+						)
+
+						resolve(true);
+					}, 300);
+				});
 			}
 		},
+		
+		
 		button_enable(){
 			return this.selectedRowKeys.length === 0;
 			
 		},
 		getData(){
-			return Array.from(this.data.values())
+			// return Array.from(this.data.values())
+			return this.data
 		},
 		rowSelection (){
 			return {

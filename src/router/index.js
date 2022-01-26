@@ -6,6 +6,16 @@ const routes = [
   {
     path: '/admin',
     name: 'AdminHome',
+    beforeEnter:(to,from,next)=>{
+      if(to.name!=='AdminLogin'&& (store.getters.getToken===""||store.getters.getExpire) ){
+        alert("you should login first")
+        next({
+          name:"AdminLogin"
+        })
+        return
+      }else{
+        next()
+      } },
     component: () => import('../views/admin/AdminHome'),
     children:[
       {
@@ -25,16 +35,7 @@ const routes = [
         component:()=>import('../views/admin/adminInfo')
       }
     ],
-    beforeEnter:(to,from,next)=>{
-      if(to.name!=='AdminLogin'&& (store.getters.getToken===""||store.getters.getExpire) ){
-        alert("you should login first")
-        next({
-          name:"AdminLogin"
-        })
-        return
-      }else{
-        next()
-      } }
+
   },
   {
     path: '/admin_login',
