@@ -41,8 +41,8 @@
                   商品管理
                 </span>
               </template>
-              <a-menu-item  key="9">商品信息</a-menu-item>
-              <a-menu-item key="10">分类管理</a-menu-item>
+              <a-menu-item @click="this.$router.push('/admin/product_info')" key="9">商品信息</a-menu-item>
+              <a-menu-item  @click="this.$router.push('/admin/categories_manage')" key="10">分类管理</a-menu-item>
               <a-menu-item @click="this.$router.push('/admin/product_manage')" key="11">商品管理</a-menu-item>
             </a-sub-menu>
             <a-sub-menu key="sub3">

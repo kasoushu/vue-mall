@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import request from "../utils/request";
+import router from "@/router";
 export default createStore({
   state: {
     userinfo:{
@@ -28,6 +29,8 @@ export default createStore({
             console.log(res)
             if (res.data.code===401){
               state.userinfo.token=""
+              alert(res.data.message)
+              router.push('/admin_login')
               console.log(res.message)
             }else if (res.data.code===200){
               let t= res.data.data.total
@@ -66,6 +69,7 @@ export default createStore({
     },
   },
   getters:{
+
     getToken: (state) =>{
       return state.userinfo.token
     },
@@ -95,7 +99,7 @@ export default createStore({
         for (let i=0;i<state.categories.length;i++){
           mymap.set(state.categories[i].id,state.categories[i])
         }
-        return mymap.get(id)
+        return mymap.get(id).name
       }
   },
   actions: {
