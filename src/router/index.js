@@ -19,6 +19,10 @@ const routes = [
     component: () => import('../views/admin/AdminHome'),
     children:[
       {
+        path: '',
+        component:() => import('../views/admin/Home')
+      },
+      {
         path:'product_manage',
         component:()=> import('../views/admin/ProductManage'),
       },
@@ -33,6 +37,14 @@ const routes = [
       {
         path:'admin_info',
         component:()=>import('../views/admin/adminInfo')
+      },
+      {
+        path:'order_manage',
+        component:()=>import('../views/admin/OrderManager')
+      },
+      {
+        path: 'order_info',
+        component: ()=> import('../views/admin/OrderInfo')
       }
     ],
 

@@ -7,7 +7,7 @@ axios.defaults.baseURL = "http://localhost:8000"
 
 
 const request = axios.create({
-    timeout:5000,
+    timeout:10000,
     headers:{
         'Content-Type': 'application/json;charset=UTF-8'
     }

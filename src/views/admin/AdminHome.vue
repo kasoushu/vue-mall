@@ -52,8 +52,8 @@
                   订单管理
                 </span>
               </template>
-              <a-menu-item @click="this.$store.commit('cleanToken')" key="5">订单信息</a-menu-item>
-              <a-menu-item key="6">订单管理</a-menu-item>
+              <a-menu-item @click="this.$router.push('/admin/order_info')" key="5">订单信息</a-menu-item>
+              <a-menu-item @click="this.$router.push('/admin/order_manage')" key="6">订单管理</a-menu-item>
             </a-sub-menu>
 
           </a-menu>
@@ -67,7 +67,9 @@
             </a-breadcrumb-item>
 
           </a-breadcrumb>
-          <router-view></router-view>
+          <router-view>
+          
+          </router-view>
         </a-layout-content>
       </a-layout>
 

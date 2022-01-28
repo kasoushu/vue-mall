@@ -1,17 +1,17 @@
 <template>
     <a-row class="row-1" type="flex" justify="center" :gutter="[16,148]"  style="margin-left: 20px" >
         <a-col :span="12">
-    <a-col :span="12">
-      <a-statistic-countdown
-        title="Token available time"
-        :value="Date.now()+60*60*1000"
-        format="HH:mm:ss"
-        style="margin-right: 50px"
-      />
-    </a-col>
+            <a-col :span="12">
+                <a-statistic-countdown
+                title="Token available time"
+                :value="Date.now()+60*60*1000"
+                format="HH:mm:ss"
+                style="margin-right: 50px"
+                />
+            </a-col>
         </a-col>
         <a-col :span="12">
-
+        
         </a-col>
     </a-row>
     <a-row  class="row-1" type="flex" justify="end" :gutter="[8,148]" style="margin-left: 20px">
@@ -97,7 +97,7 @@
                                 <a href="/admin/order_manage">More</a>
                             </template>
                         </a-card>
-    
+                        
                         <a-card title="订单概览">
                             <template #extra>
                                 <a href="/admin/order_info">More</a>
@@ -105,11 +105,11 @@
                         </a-card>
                     </a-card>
                 </a-col>
-                
-            </a-row>
-    
-
             
+            </a-row>
+        
+        
+        
         </a-col>
     
     </a-row>
@@ -119,7 +119,7 @@ import {LikeOutlined} from '@ant-design/icons-vue';
 import request from "@/utils/request";
 
 export default {
-    name: 'ProductInfo',
+    name: 'OrderInfo',
     data() {
         return {
             productTotal: 0,
