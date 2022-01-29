@@ -10,6 +10,21 @@
         :pagination="pagination"
         @change="handleTableChange"
         >
+    
+            <template v-slot:userinfo="{record}">
+                <div class="editable-row-operations">
+    <span>{{'Name:    '+record.user_info.name}}</span>
+    <p>{{'PhoneNumber:    '+ record.user_info.phone}}</p>
+                    </div>
+            </template>
+    
+    
+            <template v-slot:address="{record}">
+                <div class="editable-row-operations">
+                    <p>{{record.address.province+' '+record.address.city+' '+record.address.district+' '+record.address.detail_address}}</p>
+                    <p>{{' 邮编：'+record.address.postal_code   }} </p>
+                </div>
+            </template>
             
             
             <template v-slot:status="{record}">
@@ -22,16 +37,11 @@
             
             <template v-slot:operation="{column,record}">
                 <div class="editable-row-operations">
-						<span>
-            				<a @click="handleUpdate(record)">Update</a>
-          				</span>
+
                     <span>
-            				<a @click="handleSingleDelete(record.key)">Delete</a>
+            				<a @click="handleSingleDelete(record.id)">Delete</a>
           				</span>
                     
-                    <span>
-            				<a @click="handleDetail(record)">Detail</a>
-          				</span>
                 </div>
             </template>
         
@@ -73,30 +83,39 @@ import AddProductModal from "@/components/AddProductModal";
 import DetailProductModal from "@/components/DetailProductModal";
 import UpdateProduct from "@/components/UpdateProduct";
 const columns = [{
-    title: 'Name',
-    dataIndex: 'name',
+    title: 'OrderId',
+    dataIndex: 'id',
     sorter: true,
     // width: '20%',
 }, {
-    title: 'Category',
-    dataIndex: 'category_name',
+    title: 'ProductName',
+    dataIndex: 'product_name',
     filters: [],
     // width: '20%',
 }, {
-    title: 'Price',
-    dataIndex: 'price',
+    title: 'TotalPrice',
+    dataIndex: 'total_price',
 }, {
     title: 'Amount',
     dataIndex: 'amount'
+}, {
+    title: 'User&Contact',
+    slots: {
+        customRender: 'userinfo'
+    }
 },
     {
-        title: 'Sales',
-        dataIndex: 'sales'
-    }, {
         title: 'Status',
         dataIndex: 'st',
         slots: {customRender: "status"}
-    }, {
+    },
+    {
+      title: 'Address',
+      slots: {
+          customRender: 'address'
+      }
+    },
+    {
         title: 'Created',
         dataIndex: 'created'
     },
@@ -205,7 +224,7 @@ export default {
             this.detailVisible=true
         },
         handleSingleDelete(key){
-            let u ='/admin/delete_product/'+key
+            let u ='/admin/delete_order/'+key
             request({
                 url:u,
                 method:'post'
@@ -219,10 +238,14 @@ export default {
                 } else if (res.data.code === 200) {
                     this.current = 1
                     Modal.success({
-                        title:res.data.message,
+                        title:'Congratulation',
+                        content:res.data.message,
                     })
                 } else {
-                    alert(res.data.message)
+                    Modal.error({
+                        title:'Error',
+                        content:res.data.message,
+                    })
                 }
             }
             ).catch(
@@ -282,7 +305,8 @@ export default {
                     } else if (res.data.code === 200) {
                         this.current = 1
                         Modal.success({
-                            title:'Delete successful!',
+                            title:'Congratulation!',
+                            content: res.data.message
                         })
                     } else {
                         // alert(res.data.message)
@@ -321,10 +345,8 @@ export default {
             return (record)=>{
                 
                 switch (record.status) {
-                    case '0' : return '待上架';
-                    case '1' : return '已上架';
-                    case '2' : return '已下架';
-                    case '3' : return '售罄';
+                    case '0' : return '未完成';
+                    case '1' : return '已完成';
                 }
                 return  '状态不明'
             }

@@ -11,9 +11,11 @@
     "ant-design-vue": "^2.2.8",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "dr-vue-echarts": "^1.0.14",
     "vue": "^3.0.0",
     "vue-request": "^1.2.4",
     "vue-router": "^4.0.0-0",
+    "vue3-charts": "^1.1.27",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {

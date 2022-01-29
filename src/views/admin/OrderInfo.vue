@@ -1,146 +1,186 @@
 <template>
-    <a-row class="row-1" type="flex" justify="center" :gutter="[16,148]"  style="margin-left: 20px" >
-        <a-col :span="12">
-            <a-col :span="12">
-                <a-statistic-countdown
-                title="Token available time"
-                :value="Date.now()+60*60*1000"
-                format="HH:mm:ss"
-                style="margin-right: 50px"
-                />
-            </a-col>
+    <a-row :gutter="32" style="margin-top: 35px;">
+        <a-col :span="8">
+            <a-statistic  title="订单总数" :value="statistic.order_total" style="background-color: #ececec;padding: 25px">
+                <template #prefix>
+                    <file-text-two-tone  />
+                </template>
+            </a-statistic>
         </a-col>
-        <a-col :span="12">
-        
-        </a-col>
-    </a-row>
-    <a-row  class="row-1" type="flex" justify="end" :gutter="[8,148]" style="margin-left: 20px">
-        <a-col :span="10">
-            <div style="background: #ececec; padding: 30px">
-                <a-row :gutter="[16,128]">
-                    <a-col :span="12">
-                        <a-card>
-                            <a-statistic
-                            title="Feedback"
-                            :value="114514"
-                            :value-style="{ color: '#3f8600' }"
-                            style="margin-right: 10px"
-                            >
-                            </a-statistic>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="12">
-                        <a-card>
-                            <a-statistic
-                            title="Nothing"
-                            :value="0"
-                            :precision="2"
-                            class="demo-class"
-                            :value-style="{ color: '#cf1322' }"
-                            >
-                                <template #prefix>
-                                    <arrow-down-outlined/>
-                                </template>
-                            </a-statistic>
-                        </a-card>
-                    </a-col>
-                </a-row>
-            </div>
-        </a-col>
-        
-        <a-col :span="14">
-            <a-row justify="center" type="flex">
-                <a-col>
-                    <p style="font-size: xx-large">商品状态统计</p>
-                </a-col>
-            </a-row>
-            
-            
-            <a-row type="flex" :gutter="[128,128]" justify="center">
-                
-                <a-col :span="2">
-                    <a-progress type="circle" :percent="100" :format="() => 'Total:'+this.productTotal "/>
-                </a-col>
-                <a-col :span="2">
-                    <a-progress type="circle" :percent="getPer('0')" :format="() => '未上架:'+getTotal('0')  "/>
-                </a-col>
-                <a-col :span="2">
-                    <a-progress type="circle" :percent="getPer('1')" :format="() => '已上架:'+getTotal('1')"/>
-                </a-col>
-                
-                <a-col :span="2">
-                    <a-progress type="circle" :percent="getPer('2') " :format=" ()=>'已下架:'+getTotal('2') ">
-                    </a-progress>
-                </a-col>
-                
-                <a-col :span="2">
-                    <a-progress type="circle" :percent="getPer('3')" :format="()=>'售罄:'+getTotal('3') ">
-                    
-                    </a-progress>
-                </a-col>
-            </a-row>
-            <a-row type="flex" justify="center" :gutter="[32,128]" style="margin-top: 32px;" >
-                <a-col :span="14">
-                    <a-card title="Manage Products" style="width: 100%;">
-                        <a-card title="管理产品分类">
-                            <template #extra>
-                                <a href="/admin/categories_manage">More</a>
-                            </template>
-                        </a-card>
-                        <a-card title="管理产品">
-                            <template #extra>
-                                <a href="/admin/product_manage">More</a>
-                            </template>
-                        </a-card>
-                        <a-card title="管理订单信息">
-                            <template #extra>
-                                <a href="/admin/order_manage">More</a>
-                            </template>
-                        </a-card>
-                        
-                        <a-card title="订单概览">
-                            <template #extra>
-                                <a href="/admin/order_info">More</a>
-                            </template>
-                        </a-card>
-                    </a-card>
-                </a-col>
-            
-            </a-row>
-        
-        
-        
+        <a-col :span="8">
+            <a-statistic title="今日订单数" :value="statistic.day_total" style="background-color: #ececec;padding: 25px" class="demo-class">
+                <template #prefix>
+                    <file-text-two-tone two-tone-color="#d494aa" />
+                </template>
+            </a-statistic>
         </a-col>
     
+        <a-col :span="8">
+            <a-statistic title="本月订单数" :value="statistic.month_total" style="background-color: #ececec;padding: 25px" class="demo-class">
+                <template #prefix>
+                    <file-text-two-tone two-tone-color="#50676b" />
+                </template>
+            </a-statistic>
+        </a-col>
+    </a-row>
+    <a-row type="flex" justify="start" :gutter="16" style="padding:15px; margin-top: 20px;background-color: #ececec">
+
+        
+         <a-col :span="5" >
+             <a-card title="本月订单" :bordered="false" style="width: 250px">
+                 <a-card>
+                     <a-statistic
+                     title="未完成"
+                     :value="statistic.month_not_done"
+                     :value-style="{ color: '#3f8600' }"
+                     >
+                         <template #prefix>
+                             <arrow-up-outlined/>
+                         </template>
+                     </a-statistic>
+                 </a-card>
+                 <a-card style="margin-top: 50px">
+            
+                     <a-statistic
+                     title="已完成"
+                     :value="statistic.month_done"
+                     :value-style="{ color: '#3f8600' }"
+                     >
+                         <template #prefix>
+                             <arrow-up-outlined/>
+                         </template>
+                     </a-statistic>
+                 </a-card>
+                 <a-card
+                 style="margin-top: 50px"
+                 >
+                     <p>统计于{{ time.toLocaleString() }}</p>
+                 </a-card>
+             </a-card>
+        </a-col>
+    
+        <a-col :span="5">
+            <a-card title="今日订单" :bordered="false" style="width: 250px;" >
+            
+                <a-card>
+                    <a-statistic
+                    title="未完成"
+                    :value="statistic.day_not_done"
+                    :value-style="{ color: '#3f8600' }"
+                    style="margin-right: 50px;"
+                    >
+                        <template #prefix>
+                            <arrow-up-outlined/>
+                        </template>
+                    </a-statistic>
+                </a-card>
+                <a-card style="margin-top: 50px">
+                
+                    <a-statistic
+                    title="已完成"
+                    :value="statistic.day_done"
+                    :value-style="{ color: '#3f8600' }"
+                    >
+                        <template #prefix>
+                            <arrow-up-outlined/>
+                        </template>
+                    </a-statistic>
+                </a-card>
+                <a-card
+                style="margin-top: 50px"
+                >
+                    <p>统计于{{time.toLocaleString()}}</p>
+                </a-card>
+            </a-card>
+    
+        </a-col>
+        <a-col :span="14">
+            <a-row type="flex" justify="center">
+                <p style="font-size: xx-large">十天内订单统计</p>
+            </a-row>
+            <a-row type="flex" justify="center" >
+                <Chart
+                :data="list"
+                :margin="margin"
+                :direction="direction"
+                >
+                    <template #layers>
+                        <Grid strokeDasharray="2,2" />
+                        <Line :dataKeys="['day', 'cnt']" />
+<!--                        <Line :dataKeys="['name', 'avg']" :lineStyle="{ stroke: 'red' }" type="step" />-->
+<!--                        <Line :dataKeys="['name', 'inc']" :lineStyle="{ stroke: 'red' }"  />-->
+                    </template>
+    
+                </Chart>
+            </a-row>
+            
+        </a-col>
     </a-row>
 </template>
 <script>
 import {LikeOutlined} from '@ant-design/icons-vue';
 import request from "@/utils/request";
-
+import router from "@/router";
+import store from "@/store";
+import {ContainerOutlined,FileTextTwoTone} from "@ant-design/icons-vue";
+import { Chart, Grid, Line } from 'vue3-charts'
+import {ref} from "vue";
 export default {
     name: 'OrderInfo',
     data() {
         return {
-            productTotal: 0,
             productByStatus: [],
+        
         }
     },
     created() {
+    
+    },
+    components: {
+        LikeOutlined,
+        ContainerOutlined,
+        FileTextTwoTone,
+        Chart,Grid,Line
+    },
+    setup() {
+    
+        let statistic= ref({})
+        let list = ref([])
         request({
-            url: '/admin/product_statistic_by_status',
+            url: '/admin/order_statistic',
             method: 'get',
         }).then(
         res => {
             console.log(res)
             if (res.data.code === 401) {
-                this.$store.commit('cleanToken')
+                store.commit('cleanToken')
                 alert("your token is unavailable ")
-                this.$router.push("/admin_login")
+                router.push("/admin_login")
                 console.log(res.data.message)
             } else if (res.data.code === 200) {
-                this.productTotal = res.data.data.total
-                this.productByStatus = res.data.data.list
+                statistic.value = res.data.data
+            } else {
+                console.log(res.data.message)
+            }
+        }
+        ).catch(
+        err => console.log(err)
+        )
+    
+        // list graph
+        request({
+            url: '/admin/ten_days_order_count',
+            method: 'get',
+        }).then(
+        res => {
+            console.log(res)
+            if (res.data.code === 401) {
+                store.commit('cleanToken')
+                alert("your token is unavailable ")
+                router.push("/admin_login")
+                console.log(res.data.message)
+            } else if (res.data.code === 200) {
+                list.value = res.data.data
             } else {
                 console.log(res.data.message)
             }
@@ -149,9 +189,22 @@ export default {
         err => console.log(err)
         )
         
-    },
-    components: {
-        LikeOutlined,
+        const time = new Date()
+        const direction = ref('horizontal')
+        const margin = ref({
+            left: 0,
+            top: 20,
+            right: 20,
+            bottom: 0
+        })
+        
+        return {
+            statistic,
+            list,
+            time,
+            direction,
+            margin
+        }
     },
     computed: {
         

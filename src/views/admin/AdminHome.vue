@@ -2,15 +2,14 @@
 
   <img src="https://w.wallhaven.cc/full/y8/wallhaven-y8kjek.jpg" alt="">
   <a-layout>
-    <a-layout-header class="header" >
+    <a-layout-header style="background-color: white" class="header" >
       <a-menu class="menu" id="menu-1"
-              v-model:selectedKeys="selectedKeys1"
               mode="horizontal"
       >
-        <a-menu-item></a-menu-item>
-        <a-menu-item key="1">nav 1</a-menu-item>
-        <a-menu-item key="2">nav 2</a-menu-item>
-        <a-menu-item key="3">nav 3</a-menu-item>
+<!--        <a-menu-item></a-menu-item>-->
+<!--        <a-menu-item key="1">nav 1</a-menu-item>-->
+<!--        <a-menu-item key="2">nav 2</a-menu-item>-->
+<!--        <a-menu-item key="3">nav 3</a-menu-item>-->
       </a-menu>
     </a-layout-header>
 

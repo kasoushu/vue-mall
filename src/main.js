@@ -6,6 +6,7 @@ import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
 
+
 let app =  createApp(App).use(Antd).use(router).use(store)
 
 
